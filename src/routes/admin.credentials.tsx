@@ -10,11 +10,13 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
   DialogFooter, DialogTrigger,
 } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash2, Save, GraduationCap, FileCheck, Trophy, Medal, Award } from "lucide-react";
+import { Plus, Pencil, Trash2, Save, GraduationCap, FileCheck, Trophy, Medal, Award, Loader2 } from "lucide-react";
 import { qualifications as mockQuals, certifications as mockCerts, awards as mockAwards } from "@/lib/portfolio-data";
 import { useFirestoreDoc } from "@/hooks/useFirestore";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
+import { uploadToImageKit } from "@/lib/imagekit.functions";
 
 export const Route = createFileRoute("/admin/credentials")({
   component: AdminCredentials,
@@ -103,9 +105,34 @@ function CertDialog({
   onSave: (data: any) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState<Record<string, string>>({ title: "", provider: "", year: "", credential: "", ...initial });
+  const [form, setForm] = useState<Record<string, string>>({ title: "", provider: "", year: "", credential: "", certificateUrl: "", ...initial });
+  const [uploading, setUploading] = useState(false);
+  const uploadFn = useServerFn(uploadToImageKit);
 
-  useEffect(() => { if (open) setForm({ title: "", provider: "", year: "", credential: "", ...initial }); }, [open]);
+  useEffect(() => { if (open) setForm({ title: "", provider: "", year: "", credential: "", certificateUrl: "", ...initial }); }, [open]);
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    const uploadToast = toast.loading(`Uploading ${file.name} to ImageKit...`);
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = async () => {
+      const base64 = reader.result as string;
+      try {
+        const res = await uploadFn({ data: { fileBase64: base64, fileName: file.name } });
+        setForm(p => ({ ...p, certificateUrl: res.url }));
+        toast.success("Certificate uploaded successfully!", { id: uploadToast });
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : "Upload failed", { id: uploadToast });
+      } finally {
+        setUploading(false);
+      }
+    };
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -118,6 +145,43 @@ function CertDialog({
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5"><Label>Year</Label><Input value={form.year} onChange={e => setForm(p => ({ ...p, year: e.target.value }))} placeholder="2024" /></div>
             <div className="space-y-1.5"><Label>Credential ID</Label><Input value={form.credential} onChange={e => setForm(p => ({ ...p, credential: e.target.value }))} placeholder="ID: ABC123" /></div>
+          </div>
+          <div className="space-y-1.5">
+            <Label>Certificate Soft Copy (PDF / Image)</Label>
+            <div className="flex gap-2">
+              <Input
+                type="text"
+                readOnly
+                value={form.certificateUrl || ""}
+                placeholder="No certificate uploaded"
+                className="h-9 flex-1 text-xs"
+              />
+              <Input
+                type="file"
+                id="cert-file-input"
+                className="hidden"
+                accept="image/*,application/pdf"
+                onChange={handleFileUpload}
+                disabled={uploading}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="shrink-0 h-9"
+                onClick={() => document.getElementById("cert-file-input")?.click()}
+                disabled={uploading}
+              >
+                {uploading ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />
+                    Uploading...
+                  </>
+                ) : (
+                  "Upload"
+                )}
+              </Button>
+            </div>
           </div>
         </div>
         <DialogFooter>

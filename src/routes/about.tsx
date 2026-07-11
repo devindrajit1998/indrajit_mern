@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Download, Mail, GraduationCap, FileCheck, Trophy, Medal, Award } from "lucide-react";
+import { ArrowRight, Download, Mail, GraduationCap, FileCheck, Trophy, Medal, Award, ExternalLink } from "lucide-react";
 import { SiteLayout } from "@/components/site-layout";
 import { useFirestoreDoc, useFirestoreCollection } from "@/hooks/useFirestore";
 import heroDev from "@/assets/hero-dev.png";
@@ -180,8 +180,21 @@ function AboutPage() {
         <div className="grid md:grid-cols-3 gap-4">
           {(credentialsDoc.certifications || []).map((c: any) => (
             <div key={c.title} className="glass-card p-5">
-              <div className="w-10 h-10 rounded-lg bg-brand-purple/15 flex items-center justify-center mb-3">
-                <FileCheck className="w-5 h-5 text-brand-purple" />
+              <div className="flex items-center justify-between mb-3">
+                <div className="w-10 h-10 rounded-lg bg-brand-purple/15 flex items-center justify-center text-brand-purple shrink-0">
+                  <FileCheck className="w-5 h-5" />
+                </div>
+                {c.certificateUrl && (
+                  <a 
+                    href={c.certificateUrl} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="w-7 h-7 rounded-md bg-secondary/80 flex items-center justify-center hover:bg-brand-purple/20 hover:text-brand-purple text-muted-foreground hover:text-white transition-all cursor-pointer"
+                    title="View Certificate Soft Copy"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
               </div>
               <h3 className="font-semibold leading-tight">{c.title}</h3>
               <p className="text-sm text-muted-foreground mt-1">{c.provider}</p>
