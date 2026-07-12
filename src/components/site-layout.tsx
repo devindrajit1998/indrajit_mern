@@ -8,7 +8,7 @@ import { useFirestoreDoc } from "@/hooks/useFirestore";
 export function SiteLayout({ children }: { children: ReactNode }) {
   const { data: bio } = useFirestoreDoc<any>("about", "personal_bio");
   const { data: settings } = useFirestoreDoc<any>("settings", "site_settings");
-  
+
   const isFreelancer = settings?.freelancerMode === true;
 
   // Mobile app dock links mapping to lucide icons
@@ -23,7 +23,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen text-foreground flex flex-col relative z-0">
       <Background />
-      
+
       {/* Premium Header */}
       <header className="sticky top-0 z-50 backdrop-blur-lg bg-black/80 border-b border-border/40">
         <div className="max-w-[1400px] mx-auto flex items-center justify-between px-4 sm:px-6 py-4">
@@ -96,7 +96,6 @@ export function SiteLayout({ children }: { children: ReactNode }) {
               </a>
             ))}
           </div>
-          <p>♥ Built with React & Tailwind CSS</p>
         </div>
       </footer>
 
