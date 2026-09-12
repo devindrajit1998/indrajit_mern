@@ -28,6 +28,7 @@ function AboutPage() {
   const { list: experience, loading: experienceLoading } = useFirestoreCollection<any>("experience");
   const { list: skills, loading: skillsLoading } = useFirestoreCollection<any>("skills");
   const { data: skillsDoc, loading: skillsLoadingDoc } = useFirestoreDoc<any>("skills", "portfolio_skills");
+  const { data: settings } = useFirestoreDoc<any>("settings", "site_settings");
 
   const isLoading = bioLoading || credentialsLoading || experienceLoading || skillsLoading || skillsLoadingDoc;
 
@@ -85,19 +86,18 @@ function AboutPage() {
             <Link to="/contact" className="btn-glow btn-glow-hover inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold">
               Hire Me <Mail className="w-4 h-4" />
             </Link>
-            {bio.resumeBase64 ? (
+            <Link to="/services" className="inline-flex items-center gap-2 px-5 py-3 rounded-lg font-semibold border border-border bg-card/50 hover:bg-card transition">
+              View Services <ArrowRight className="w-4 h-4" />
+            </Link>
+            {settings?.showResume && bio.resumeBase64 ? (
               <a
                 href={bio.resumeBase64}
                 download="resume.pdf"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold border border-border bg-card/50 hover:bg-card transition cursor-pointer"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-lg font-semibold border border-border bg-card/50 hover:bg-card transition cursor-pointer"
               >
                 <Download className="w-4 h-4" /> Download CV
               </a>
-            ) : (
-              <a href="#" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold border border-border bg-card/50 hover:bg-card transition opacity-60 pointer-events-none">
-                <Download className="w-4 h-4" /> Download CV
-              </a>
-            )}
+            ) : null}
           </div>
         </div>
       </section>

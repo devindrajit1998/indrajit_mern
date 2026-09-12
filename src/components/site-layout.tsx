@@ -44,24 +44,25 @@ export function SiteLayout({ children }: { children: ReactNode }) {
               </Link>
             ))}
           </nav>
-          {bio?.resumeUrl || bio?.resumeBase64 ? (
-            <a
-              href={bio.resumeUrl || bio.resumeBase64}
-              target={bio.resumeUrl ? "_blank" : undefined}
-              rel={bio.resumeUrl ? "noreferrer" : undefined}
-              download={bio.resumeUrl ? undefined : "resume.pdf"}
-              className="btn-glow btn-glow-hover inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold cursor-pointer"
+          <div className="flex items-center gap-2.5">
+            {settings?.showResume && (bio?.resumeUrl || bio?.resumeBase64) ? (
+              <a
+                href={bio.resumeUrl || bio.resumeBase64}
+                target={bio.resumeUrl ? "_blank" : undefined}
+                rel={bio.resumeUrl ? "noreferrer" : undefined}
+                download={bio.resumeUrl ? undefined : "resume.pdf"}
+                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs sm:text-sm font-medium border border-border/70 hover:bg-card/60 transition cursor-pointer"
+              >
+                <Download className="w-3.5 h-3.5" /> Resume
+              </a>
+            ) : null}
+            <Link
+              to="/contact"
+              className="btn-glow btn-glow-hover inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold shadow-md shadow-brand-purple/20"
             >
-              <Download className="w-3.5 h-3.5" /> Resume
-            </a>
-          ) : (
-            <button
-              disabled
-              className="btn-glow inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold opacity-50 cursor-not-allowed"
-            >
-              <Download className="w-3.5 h-3.5" /> Resume
-            </button>
-          )}
+              <Send className="w-3.5 h-3.5" /> Hire Me
+            </Link>
+          </div>
         </div>
       </header>
 

@@ -1,7 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, FolderKanban, Wrench, Sparkles, Briefcase,
-  GraduationCap, Mail, Settings, User, Image as ImageIcon,
+  GraduationCap, Mail, Settings, User, Image as ImageIcon, MessageSquareQuote,
 } from "lucide-react";
 import { useFirestoreDoc } from "@/hooks/useFirestore";
 import {
@@ -22,6 +22,7 @@ export function AdminSidebar() {
     { title: "Dashboard", url: "/admin", icon: LayoutDashboard, exact: true },
     { title: "Projects", url: "/admin/projects", icon: FolderKanban },
     ...(isFreelancer ? [{ title: "Services", url: "/admin/services", icon: Wrench }] : []),
+    { title: "Testimonials", url: "/admin/testimonials", icon: MessageSquareQuote },
     { title: "Skills", url: "/admin/skills", icon: Sparkles },
     { title: "Experience", url: "/admin/experience", icon: Briefcase },
     { title: "Credentials", url: "/admin/credentials", icon: GraduationCap },

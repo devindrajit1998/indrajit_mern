@@ -7,7 +7,7 @@ import {
   FolderKanban, Wrench, Mail, Eye, TrendingUp, ArrowUpRight,
   Sparkles, PencilLine, CheckCircle2, Clock,
 } from "lucide-react";
-import { projects as mockProjects, services as mockServices, skills as mockSkills } from "@/lib/portfolio-data";
+import { projects as mockProjects, services as mockServices, skills as mockSkills, testimonials as mockTestimonials } from "@/lib/portfolio-data";
 import { useFirestoreCollection, useFirestoreDoc } from "@/hooks/useFirestore";
 
 export const Route = createFileRoute("/admin/")({
@@ -19,6 +19,7 @@ function AdminDashboard() {
   const { list: services } = useFirestoreCollection("services", mockServices);
   const { list: messages } = useFirestoreCollection("contact_messages", []);
   const { list: skills } = useFirestoreCollection("skills", mockSkills);
+  const { list: testimonials } = useFirestoreCollection("testimonials", mockTestimonials);
   const { data: settings } = useFirestoreDoc<any>("settings", "site_settings");
 
   const isFreelancer = settings?.freelancerMode === true;
@@ -26,8 +27,8 @@ function AdminDashboard() {
   const stats = [
     { label: "Projects", value: projects.length, icon: FolderKanban, hint: "+0 this month", tone: "text-brand-blue" },
     ...(isFreelancer ? [{ label: "Services", value: services.length, icon: Wrench, hint: "All active", tone: "text-brand-purple" }] : []),
+    { label: "Testimonials", value: testimonials.length, icon: Sparkles, hint: "Endorsements", tone: "text-brand-purple" },
     { label: "New Messages", value: messages.length, icon: Mail, hint: "Check messages tab", tone: "text-brand-green" },
-    { label: "Page Views (30d)", value: "1.2k", icon: Eye, hint: "Estimated metrics", tone: "text-brand-orange" },
   ];
 
   const activity = [

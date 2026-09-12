@@ -7,7 +7,7 @@ import {
 
 import { SiteLayout } from "@/components/site-layout";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { mernStack, type Project, stats as defaultStats } from "@/lib/portfolio-data";
+import { mernStack, type Project, stats as defaultStats, testimonials as defaultTestimonials, type Testimonial } from "@/lib/portfolio-data";
 import { useFirestoreDoc, useFirestoreCollection } from "@/hooks/useFirestore";
 import heroDev from "@/assets/hero-dev.png";
 import testimonialAvatar from "@/assets/testimonial-1.jpg";
@@ -72,6 +72,7 @@ function Portfolio() {
   const { list: projects, loading: projectsLoading } = useFirestoreCollection<any>("projects");
   const { list: services, loading: servicesLoading } = useFirestoreCollection<any>("services");
   const { data: skillsDoc, loading: skillsLoading } = useFirestoreDoc<any>("skills", "portfolio_skills");
+  const { list: testimonialsList } = useFirestoreCollection<Testimonial>("testimonials", defaultTestimonials);
 
   const isLoading = bioLoading || settingsLoading || projectsLoading || servicesLoading || skillsLoading;
 
@@ -125,28 +126,31 @@ function Portfolio() {
           <p className="mt-6 text-base text-muted-foreground max-w-md">
             {bio.shortBio}
           </p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            {bio.resumeUrl || bio.resumeBase64 ? (
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <Link
+              to="/contact"
+              className="btn-glow btn-glow-hover inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-sm shadow-lg shadow-brand-purple/20"
+            >
+              Hire Me / Start Project <Send className="w-4 h-4" />
+            </Link>
+            <Link
+              to="/services"
+              className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl font-semibold text-sm border border-border bg-card/60 hover:bg-card hover:border-brand-purple/40 transition"
+            >
+              Explore Services <ArrowRight className="w-4 h-4" />
+            </Link>
+            {settings?.showResume && (bio.resumeUrl || bio.resumeBase64) ? (
               <a
                 href={bio.resumeUrl || bio.resumeBase64}
                 download={bio.resumeUrl ? undefined : "resume.pdf"}
                 target={bio.resumeUrl ? "_blank" : undefined}
                 rel={bio.resumeUrl ? "noreferrer" : undefined}
-                className="btn-glow btn-glow-hover inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-4 py-3 rounded-lg text-xs sm:text-sm font-medium text-muted-foreground hover:text-foreground transition cursor-pointer"
+                title="Download CV / Resume"
               >
-                Download Resume <Download className="w-4 h-4" />
+                <Download className="w-3.5 h-3.5" /> Resume
               </a>
-            ) : (
-              <button
-                disabled
-                className="btn-glow inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold opacity-50 cursor-not-allowed"
-              >
-                Download Resume <Download className="w-4 h-4" />
-              </button>
-            )}
-            <Link to="/contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold border border-border bg-card/50 hover:bg-card transition">
-              Contact Me <Send className="w-4 h-4" />
-            </Link>
+            ) : null}
           </div>
           <div className="mt-8 flex gap-4">
             <a href={settings.github} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-lg glass-card flex items-center justify-center hover:text-brand-purple transition">
@@ -230,10 +234,12 @@ function Portfolio() {
           </div>
 
           {/* Status Badge */}
-          {settings.showOpenToWork && (
+          {settings.showOpenToWork !== false && (
             <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 glass-card backdrop-blur-md px-5 py-2.5 flex items-center gap-2.5 text-sm whitespace-nowrap rounded-[16px] border border-white/10 shadow-[0_15px_30px_rgba(0,0,0,0.4)] z-30" style={{ backgroundColor: "#0A0D1A" }}>
               <span className="w-2.5 h-2.5 rounded-full bg-brand-green shadow-[0_0_8px_#10B981] animate-pulse" />
-              <span className="font-medium text-white/90">Actively interviewing for full-time roles</span>
+              <span className="font-medium text-white/90">
+                {settings.availabilityText || (settings?.freelancerMode !== false ? "Available for Freelance & Contract Projects" : "Actively interviewing for roles")}
+              </span>
             </div>
           )}
         </div>
@@ -350,44 +356,101 @@ function Portfolio() {
       </section>
 
 
-      {/* Recommendation */}
-      {settings?.freelancerMode && (
-        <section className="mt-12 glass-card p-8">
-          <Quote className="w-8 h-8 text-brand-purple mb-3" />
-          <p className="text-base text-muted-foreground leading-relaxed max-w-3xl">
-            Indrajit is one of the most reliable engineers I've worked with. He owns features
-            end-to-end, writes clean, well-tested code, and communicates clearly with product
-            and design. Any team would be lucky to have him.
-          </p>
-          <div className="mt-5 flex items-center justify-between flex-wrap gap-3">
-            <div className="flex items-center gap-3">
-              <img src={testimonialAvatar} alt="Rohan Sharma" width={48} height={48} className="w-12 h-12 rounded-full object-cover" />
-              <div>
-                <div className="text-sm font-semibold">Rohan Sharma</div>
-                <div className="text-[11px] text-muted-foreground">Engineering Manager, TechNova</div>
-              </div>
-            </div>
-            <div className="flex gap-0.5">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+      {/* Recommendations & Testimonials */}
+      {settings?.freelancerMode && testimonialsList.length > 0 && (
+        <section className="mt-14 space-y-6">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-brand-purple mb-1">Endorsements</p>
+            <h2 className="text-2xl lg:text-3xl font-bold font-display">What Clients & Peers Say</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {testimonialsList
+              .filter((t) => t.featured !== false)
+              .map((t, idx) => (
+                <div
+                  key={t.id || idx}
+                  className="glass-card p-6 flex flex-col justify-between rounded-2xl border border-border/70 hover:border-brand-purple/50 transition-all duration-300 hover:-translate-y-1 relative shadow-sm"
+                >
+                  <div className="space-y-4">
+                    {/* Top row: Quote icon + Stars */}
+                    <div className="flex items-center justify-between">
+                      <div className="w-8 h-8 rounded-lg bg-brand-purple/15 text-brand-purple flex items-center justify-center">
+                        <Quote className="w-4 h-4" />
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-3.5 h-3.5 ${
+                              i < (t.rating || 5)
+                                ? "fill-amber-400 text-amber-400"
+                                : "text-muted-foreground/25"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Testimonial Quote */}
+                    <p className="text-sm text-muted-foreground leading-relaxed italic">
+                      "{t.quote}"
+                    </p>
+                  </div>
+
+                  {/* Customer Info footer */}
+                  <div className="mt-6 pt-4 border-t border-border/40 flex items-center gap-3">
+                    {t.avatar ? (
+                      <img
+                        src={t.avatar}
+                        alt={t.name}
+                        width={44}
+                        height={44}
+                        className="w-11 h-11 rounded-full object-cover border-2 border-brand-purple/30 shrink-0 shadow-sm"
+                      />
+                    ) : (
+                      <div className="w-11 h-11 rounded-full bg-brand-purple/20 text-brand-purple font-semibold flex items-center justify-center text-sm border-2 border-brand-purple/30 shrink-0">
+                        {t.name ? t.name.substring(0, 2).toUpperCase() : "CU"}
+                      </div>
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-semibold truncate text-foreground">{t.name}</div>
+                      {t.date && (
+                        <div className="text-[11px] text-muted-foreground mt-0.5">{t.date}</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
               ))}
-            </div>
           </div>
         </section>
       )}
 
-      {/* CTA — recruiters */}
-      {settings?.freelancerMode && (
-        <section className="mt-12 glass-card p-8 flex flex-col lg:flex-row items-center gap-6 justify-between">
-          <div>
-            <h2 className="text-2xl font-bold">Hiring for a MERN role? 💼</h2>
-            <p className="text-sm text-muted-foreground mt-1">Recruiters and hiring managers — happy to share my resume, references, and take-home samples.</p>
-          </div>
-          <Link to="/contact" className="btn-glow btn-glow-hover inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold">
-            Get In Touch <ArrowRight className="w-4 h-4" />
+      {/* Freelance Project Inquiry CTA */}
+      <section className="mt-14 glass-card p-8 sm:p-10 rounded-2xl border border-brand-purple/30 bg-gradient-to-r from-card/80 via-card/50 to-brand-purple/10 flex flex-col lg:flex-row items-center gap-6 justify-between relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-purple/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="relative z-10 max-w-xl">
+          <span className="text-xs font-semibold uppercase tracking-wider text-brand-purple">Ready to collaborate?</span>
+          <h2 className="text-2xl sm:text-3xl font-bold font-display mt-1">Have a project in mind? 🚀</h2>
+          <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+            Let's turn your idea into a fast, modern, and production-ready web application. From MVPs and full-stack platforms to UI redesigns and API integrations.
+          </p>
+        </div>
+        <div className="relative z-10 flex flex-wrap gap-3 shrink-0">
+          <Link
+            to="/contact"
+            className="btn-glow btn-glow-hover inline-flex items-center gap-2 px-6 py-3.5 rounded-xl font-semibold text-sm shadow-xl shadow-brand-purple/25"
+          >
+            Start a Project <ArrowRight className="w-4 h-4" />
           </Link>
-        </section>
-      )}
+          <Link
+            to="/services"
+            className="inline-flex items-center gap-2 px-5 py-3.5 rounded-xl font-semibold text-sm border border-border bg-card/60 hover:bg-card transition"
+          >
+            View Services
+          </Link>
+        </div>
+      </section>
 
       <ProjectModal project={selected} onClose={() => setSelected(null)} />
     </SiteLayout>

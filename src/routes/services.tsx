@@ -48,6 +48,20 @@ function ServicesPage() {
             })}
           </div>
         )}
+
+        {/* Client CTA Banner */}
+        <div className="mt-14 glass-card p-8 rounded-2xl border border-brand-purple/30 bg-gradient-to-r from-card/80 to-brand-purple/10 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div>
+            <h3 className="text-xl font-bold font-display">Need a custom solution or consultation?</h3>
+            <p className="text-sm text-muted-foreground mt-1">Let's discuss your scope, timeline, and deliverables.</p>
+          </div>
+          <Link
+            to="/contact"
+            className="btn-glow btn-glow-hover inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm shrink-0"
+          >
+            Get a Free Quote
+          </Link>
+        </div>
       </div>
     </SiteLayout>
   );

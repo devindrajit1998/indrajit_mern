@@ -209,3 +209,25 @@ export const awards = [
     desc: "Ranked in the top 5% among 500+ participants in a national-level coding contest.",
   },
 ];
+
+export type Testimonial = {
+  id?: string;
+  name: string; // Customer Name
+  quote: string; // Review / feedback
+  avatar?: string; // Customer Image
+  rating?: number; // 1-5
+  date?: string; // Date added (e.g. YYYY-MM-DD)
+  featured?: boolean;
+};
+
+export const testimonials: Testimonial[] = [
+  {
+    name: "Rohan Sharma",
+    quote: "Indrajit is one of the most reliable engineers I've worked with. He owns features end-to-end, writes clean, well-tested code, and communicates clearly with product and design. Any team would be lucky to have him.",
+    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+    rating: 5,
+    date: "2025-01-15",
+    featured: true,
+  },
+];
+

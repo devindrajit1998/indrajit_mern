@@ -29,9 +29,11 @@ function AdminSettings() {
     email: "hello@indrajit.dev",
     enableContactForm: true,
     showOpenToWork: true,
+    showResume: false,
+    availabilityText: "Available for Freelance & Contract Projects",
     enableBlog: false,
     maintenanceMode: false,
-    freelancerMode: false
+    freelancerMode: true
   });
 
   const [localSettings, setLocalSettings] = useState(settings);
@@ -144,12 +146,26 @@ function AdminSettings() {
             <CardDescription>Toggle features across the public site.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="space-y-1.5 pt-2 border-t border-border/50">
+              <Label className="text-xs font-semibold">Availability Badge Text</Label>
+              <Input
+                placeholder="e.g. Available for Freelance & Contract Projects"
+                value={localSettings.availabilityText || ""}
+                onChange={(e) => handleUpdate("availabilityText", e.target.value)}
+                className="h-9"
+              />
+              <p className="text-[11px] text-muted-foreground">
+                Text displayed on the pulsing green badge on the hero photo.
+              </p>
+            </div>
+
             {[
+              { label: "Freelancer Mode (Recommended)", desc: "Showcase freelance services, client testimonials, and project inquiry CTAs.", key: "freelancerMode" },
+              { label: "Show Availability Badge", desc: "Displays pulsing availability badge on the hero image.", key: "showOpenToWork" },
+              { label: "Show Resume Download", desc: "Show Resume/CV download buttons on header, hero and about pages.", key: "showResume" },
               { label: "Enable contact form", desc: "Show the contact form on /contact.", key: "enableContactForm" },
-              { label: "Show 'Open to work' badge", desc: "Displays availability badge in the hero.", key: "showOpenToWork" },
               { label: "Enable blog section", desc: "Adds /blog to the navigation.", key: "enableBlog" },
               { label: "Maintenance mode", desc: "Show a maintenance banner site-wide.", key: "maintenanceMode" },
-              { label: "Freelancer Mode", desc: "Toggle between Freelancer (shows Services) and Interview mode.", key: "freelancerMode" },
             ].map((f) => (
               <div key={f.label} className="flex items-start justify-between gap-3">
                 <div>
