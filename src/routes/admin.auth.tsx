@@ -28,7 +28,7 @@ function AdminAuth() {
     // Small delay for UX feedback
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    if (email.trim() === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+    if (email.trim().toLowerCase() === ADMIN_EMAIL.toLowerCase() && password === ADMIN_PASSWORD) {
       sessionStorage.setItem("admin_authenticated", "true");
       toast.success("Signed in successfully");
       navigate({ to: "/admin" });

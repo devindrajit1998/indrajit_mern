@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Save, Github, Linkedin, Twitter, Mail, Globe } from "lucide-react";
+import { Save, Github, Linkedin, Twitter, Mail, Globe, Sparkles, KeyRound, ExternalLink } from "lucide-react";
 import { useFirestoreDoc } from "@/hooks/useFirestore";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
@@ -33,7 +33,8 @@ function AdminSettings() {
     availabilityText: "Available for Freelance & Contract Projects",
     enableBlog: false,
     maintenanceMode: false,
-    freelancerMode: true
+    freelancerMode: true,
+    geminiApiKey: "",
   });
 
   const [localSettings, setLocalSettings] = useState(settings);
@@ -178,6 +179,59 @@ function AdminSettings() {
                 />
               </div>
             ))}
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-2 border-brand-purple/40 bg-gradient-to-br from-brand-purple/5 to-transparent">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-brand-purple/20 text-brand-purple">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <div>
+                  <CardTitle className="text-base">Google AI Studio (Gemini Integration)</CardTitle>
+                  <CardDescription>
+                    Power one-click AI generation for project descriptions, key impact metrics, and portfolio copywriting.
+                  </CardDescription>
+                </div>
+              </div>
+              <a
+                href="https://aistudio.google.com/app/apikey"
+                target="_blank"
+                rel="noreferrer"
+                className="hidden sm:inline-flex items-center gap-1 text-xs text-brand-purple hover:underline"
+              >
+                Get free API Key <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="space-y-1.5">
+              <Label className="flex items-center gap-1.5 text-xs font-semibold">
+                <KeyRound className="w-3.5 h-3.5 text-muted-foreground" /> Google AI Studio API Key
+              </Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  type="password"
+                  placeholder="AIzaSy..."
+                  value={localSettings.geminiApiKey || ""}
+                  onChange={(e) => handleUpdate("geminiApiKey", e.target.value)}
+                  className="font-mono text-xs"
+                />
+              </div>
+              <p className="text-[11px] text-muted-foreground">
+                Your API key is securely saved in site settings. You can generate one for free at{" "}
+                <a
+                  href="https://aistudio.google.com/app/apikey"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-brand-purple hover:underline"
+                >
+                  aistudio.google.com/app/apikey
+                </a>.
+              </p>
+            </div>
           </CardContent>
         </Card>
 

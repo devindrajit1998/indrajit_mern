@@ -15,6 +15,13 @@ export function AdminSidebar() {
   const collapsed = state === "collapsed";
   const pathname = useRouterState({ select: (r) => r.location.pathname });
   const { data: settings } = useFirestoreDoc<any>("settings", "site_settings");
+  const { data: bio } = useFirestoreDoc<any>("about", "personal_bio", {
+    fullName: "Indrajit Ghosh",
+    email: "indrajitghosh449@gmail.com",
+  });
+
+  const displayName = bio?.fullName || settings?.fullName || "Indrajit Ghosh";
+  const displayEmail = settings?.contactEmail || settings?.email || bio?.email || "indrajitghosh449@gmail.com";
 
   const isFreelancer = settings?.freelancerMode === true;
 
@@ -94,13 +101,22 @@ export function AdminSidebar() {
 
       <SidebarFooter className="border-t border-border/50">
         <div className="flex items-center gap-2 px-2 py-2">
-          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-semibold shrink-0">
-            IG
+          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-xs font-semibold shrink-0 overflow-hidden">
+            {bio?.avatarUrl || bio?.avatarBase64 ? (
+              <img src={bio.avatarUrl || bio.avatarBase64} alt={displayName} className="w-full h-full object-cover" />
+            ) : (
+              (displayName || "IG")
+                .split(" ")
+                .map((n: string) => n[0])
+                .join("")
+                .slice(0, 2)
+                .toUpperCase()
+            )}
           </div>
           {!collapsed && (
-            <div className="flex flex-col leading-tight">
-              <span className="text-xs font-medium">Indrajit Ghosh</span>
-              <span className="text-[10px] text-muted-foreground">admin@site.dev</span>
+            <div className="flex flex-col leading-tight min-w-0">
+              <span className="text-xs font-medium truncate">{displayName}</span>
+              <span className="text-[10px] text-muted-foreground truncate">{displayEmail}</span>
             </div>
           )}
         </div>

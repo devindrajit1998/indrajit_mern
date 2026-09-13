@@ -1,7 +1,7 @@
-import { createFileRoute, Outlet, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/admin-sidebar";
-import { Bell, Search, ExternalLink, LogOut, Loader2 } from "lucide-react";
+import { Search, ExternalLink, LogOut, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
@@ -20,26 +20,26 @@ export const Route = createFileRoute("/admin")({
 
 function AdminLayout() {
   const navigate = useNavigate();
-  const [checkingAuth, setCheckingAuth] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  const isAuthPage =
-    typeof window !== "undefined" && window.location.pathname.endsWith("/auth");
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (isAuthPage) {
-      setCheckingAuth(false);
-      return;
-    }
+    setMounted(true);
+  }, []);
 
-    const authenticated = sessionStorage.getItem("admin_authenticated") === "true";
-    setIsAuthenticated(authenticated);
-    setCheckingAuth(false);
+  const isAuthPage = pathname.endsWith("/auth") || pathname === "/admin/auth";
+  const isAuthenticated =
+    typeof window !== "undefined" && sessionStorage.getItem("admin_authenticated") === "true";
 
-    if (!authenticated) {
-      navigate({ to: "/admin/auth" as any });
+  useEffect(() => {
+    if (!mounted) return;
+
+    if (!isAuthPage && !isAuthenticated) {
+      navigate({ to: "/admin/auth" as any, replace: true });
+    } else if (isAuthPage && isAuthenticated) {
+      navigate({ to: "/admin" as any, replace: true });
     }
-  }, [navigate, isAuthPage]);
+  }, [mounted, isAuthPage, isAuthenticated, pathname, navigate]);
 
   function handleSignOut() {
     sessionStorage.removeItem("admin_authenticated");
@@ -47,7 +47,7 @@ function AdminLayout() {
     navigate({ to: "/admin/auth" as any });
   }
 
-  if (checkingAuth) {
+  if (!mounted) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -60,7 +60,11 @@ function AdminLayout() {
   }
 
   if (!isAuthenticated) {
-    return null;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
   }
 
   return (

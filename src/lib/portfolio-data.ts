@@ -38,6 +38,10 @@ export type Project = {
   repoUrl: string;
   overview: string;
   features: string[];
+  category?: string;
+  impact?: string;
+  featured?: boolean;
+  status?: string;
 };
 
 export const projects: Project[] = [
