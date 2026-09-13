@@ -1,14 +1,23 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Github, Linkedin, Twitter, Mail, Send, ArrowRight, Quote, Star,
-  CheckCircle2, ExternalLink, Download, Code2, Server, Palette, Zap, Database, Cloud
+  CheckCircle2, ExternalLink, Download, Code2, Server, Palette, Zap, Database, Cloud,
+  ChevronLeft, ChevronRight
 } from "lucide-react";
 
 import { SiteLayout } from "@/components/site-layout";
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { mernStack, type Project, stats as defaultStats, testimonials as defaultTestimonials, type Testimonial } from "@/lib/portfolio-data";
 import { useFirestoreDoc, useFirestoreCollection } from "@/hooks/useFirestore";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 import heroDev from "@/assets/hero-dev.png";
 import testimonialAvatar from "@/assets/testimonial-1.jpg";
 
@@ -356,74 +365,9 @@ function Portfolio() {
       </section>
 
 
-      {/* Recommendations & Testimonials */}
+      {/* Recommendations & Testimonials Slider */}
       {settings?.freelancerMode && testimonialsList.length > 0 && (
-        <section className="mt-14 space-y-6">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-brand-purple mb-1">Endorsements</p>
-            <h2 className="text-2xl lg:text-3xl font-bold font-display">What Clients & Peers Say</h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {testimonialsList
-              .filter((t) => t.featured !== false)
-              .map((t, idx) => (
-                <div
-                  key={t.id || idx}
-                  className="glass-card p-6 flex flex-col justify-between rounded-2xl border border-border/70 hover:border-brand-purple/50 transition-all duration-300 hover:-translate-y-1 relative shadow-sm"
-                >
-                  <div className="space-y-4">
-                    {/* Top row: Quote icon + Stars */}
-                    <div className="flex items-center justify-between">
-                      <div className="w-8 h-8 rounded-lg bg-brand-purple/15 text-brand-purple flex items-center justify-center">
-                        <Quote className="w-4 h-4" />
-                      </div>
-                      <div className="flex items-center gap-1">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-3.5 h-3.5 ${
-                              i < (t.rating || 5)
-                                ? "fill-amber-400 text-amber-400"
-                                : "text-muted-foreground/25"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Testimonial Quote */}
-                    <p className="text-sm text-muted-foreground leading-relaxed italic">
-                      "{t.quote}"
-                    </p>
-                  </div>
-
-                  {/* Customer Info footer */}
-                  <div className="mt-6 pt-4 border-t border-border/40 flex items-center gap-3">
-                    {t.avatar ? (
-                      <img
-                        src={t.avatar}
-                        alt={t.name}
-                        width={44}
-                        height={44}
-                        className="w-11 h-11 rounded-full object-cover border-2 border-brand-purple/30 shrink-0 shadow-sm"
-                      />
-                    ) : (
-                      <div className="w-11 h-11 rounded-full bg-brand-purple/20 text-brand-purple font-semibold flex items-center justify-center text-sm border-2 border-brand-purple/30 shrink-0">
-                        {t.name ? t.name.substring(0, 2).toUpperCase() : "CU"}
-                      </div>
-                    )}
-                    <div className="min-w-0 flex-1">
-                      <div className="text-sm font-semibold truncate text-foreground">{t.name}</div>
-                      {t.date && (
-                        <div className="text-[11px] text-muted-foreground mt-0.5">{t.date}</div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-          </div>
-        </section>
+        <TestimonialsSlider testimonials={testimonialsList.filter((t) => t.featured !== false)} />
       )}
 
       {/* Freelance Project Inquiry CTA */}
@@ -454,6 +398,148 @@ function Portfolio() {
 
       <ProjectModal project={selected} onClose={() => setSelected(null)} />
     </SiteLayout>
+  );
+}
+
+function TestimonialsSlider({ testimonials }: { testimonials: Testimonial[] }) {
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!api) return;
+
+    setCount(api.scrollSnapList().length);
+    setCurrent(api.selectedScrollSnap());
+
+    api.on("select", () => {
+      setCurrent(api.selectedScrollSnap());
+    });
+  }, [api]);
+
+  return (
+    <section className="mt-14 space-y-6">
+      {/* Header with Title and Navigation Controls */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-brand-purple mb-1">Endorsements</p>
+          <h2 className="text-2xl lg:text-3xl font-bold font-display">What Clients & Peers Say</h2>
+        </div>
+
+        {/* Carousel Prev / Next Controls */}
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <button
+            type="button"
+            onClick={() => api?.scrollPrev()}
+            disabled={!api?.canScrollPrev()}
+            aria-label="Previous testimonial"
+            className="w-10 h-10 rounded-xl glass-card flex items-center justify-center border border-border/80 hover:border-brand-purple/60 hover:text-brand-purple transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => api?.scrollNext()}
+            disabled={!api?.canScrollNext()}
+            aria-label="Next testimonial"
+            className="w-10 h-10 rounded-xl glass-card flex items-center justify-center border border-border/80 hover:border-brand-purple/60 hover:text-brand-purple transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+
+      {/* Carousel Container */}
+      <div className="relative">
+        <Carousel
+          setApi={setApi}
+          opts={{
+            align: "start",
+            loop: false,
+          }}
+          className="w-full"
+        >
+          <CarouselContent className="-ml-4 sm:-ml-5">
+            {testimonials.map((t, idx) => (
+              <CarouselItem
+                key={t.id || idx}
+                className="pl-4 sm:pl-5 basis-full md:basis-1/2 lg:basis-1/3"
+              >
+                <div className="h-full glass-card p-6 flex flex-col justify-between rounded-2xl border border-border/70 hover:border-brand-purple/50 transition-all duration-300 hover:-translate-y-1 relative shadow-sm min-h-[260px]">
+                  <div className="space-y-4">
+                    {/* Top row: Quote icon + Stars */}
+                    <div className="flex items-center justify-between">
+                      <div className="w-8 h-8 rounded-lg bg-brand-purple/15 text-brand-purple flex items-center justify-center">
+                        <Quote className="w-4 h-4" />
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-3.5 h-3.5 ${
+                              i < (t.rating || 5)
+                                ? "fill-amber-400 text-amber-400"
+                                : "text-muted-foreground/25"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Testimonial Quote */}
+                    <p className="text-sm text-muted-foreground leading-relaxed italic line-clamp-5">
+                      "{t.quote}"
+                    </p>
+                  </div>
+
+                  {/* Customer Info footer */}
+                  <div className="mt-6 pt-4 border-t border-border/40 flex items-center gap-3">
+                    {t.avatar ? (
+                      <img
+                        src={t.avatar}
+                        alt={t.name}
+                        width={44}
+                        height={44}
+                        className="w-11 h-11 rounded-full object-cover border-2 border-brand-purple/30 shrink-0 shadow-sm"
+                      />
+                    ) : (
+                      <div className="w-11 h-11 rounded-full bg-brand-purple/20 text-brand-purple font-semibold flex items-center justify-center text-sm border-2 border-brand-purple/30 shrink-0">
+                        {t.name ? t.name.substring(0, 2).toUpperCase() : "CU"}
+                      </div>
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-semibold truncate text-foreground">{t.name}</div>
+                      {t.date && (
+                        <div className="text-[11px] text-muted-foreground mt-0.5">{t.date}</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+        </Carousel>
+
+        {/* Pagination Dots */}
+        {count > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-6">
+            {[...Array(count)].map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                aria-label={`Go to slide ${i + 1}`}
+                onClick={() => api?.scrollTo(i)}
+                className={`transition-all duration-300 rounded-full ${
+                  current === i
+                    ? "w-8 h-2 bg-gradient-to-r from-brand-purple to-brand-blue"
+                    : "w-2 h-2 bg-muted-foreground/30 hover:bg-muted-foreground/60"
+                }`}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
 
