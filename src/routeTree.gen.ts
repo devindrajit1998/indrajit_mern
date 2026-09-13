@@ -13,10 +13,12 @@ import { Route as ServicesRouteImport } from './routes/services'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AdminTestimonialsRouteImport } from './routes/admin.testimonials'
 import { Route as AdminSkillsRouteImport } from './routes/admin.skills'
 import { Route as AdminSettingsRouteImport } from './routes/admin.settings'
@@ -26,6 +28,7 @@ import { Route as AdminMessagesRouteImport } from './routes/admin.messages'
 import { Route as AdminMediaRouteImport } from './routes/admin.media'
 import { Route as AdminExperienceRouteImport } from './routes/admin.experience'
 import { Route as AdminCredentialsRouteImport } from './routes/admin.credentials'
+import { Route as AdminBlogsRouteImport } from './routes/admin.blogs'
 import { Route as AdminAuthRouteImport } from './routes/admin.auth'
 import { Route as AdminAboutRouteImport } from './routes/admin.about'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
@@ -52,6 +55,11 @@ const ContactRoute = ContactRouteImport.update({
   path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -71,6 +79,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => BlogRoute,
 } as any)
 const AdminTestimonialsRoute = AdminTestimonialsRouteImport.update({
   id: '/testimonials',
@@ -117,6 +130,11 @@ const AdminCredentialsRoute = AdminCredentialsRouteImport.update({
   path: '/credentials',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminBlogsRoute = AdminBlogsRouteImport.update({
+  id: '/blogs',
+  path: '/blogs',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminAuthRoute = AdminAuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -150,6 +168,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
+  '/blog': typeof BlogRouteWithChildren
   '/contact': typeof ContactRoute
   '/mcp': typeof McpRoute
   '/projects': typeof ProjectsRoute
@@ -158,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/about': typeof AdminAboutRoute
   '/admin/auth': typeof AdminAuthRoute
+  '/admin/blogs': typeof AdminBlogsRoute
   '/admin/credentials': typeof AdminCredentialsRoute
   '/admin/experience': typeof AdminExperienceRoute
   '/admin/media': typeof AdminMediaRoute
@@ -167,12 +187,14 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/skills': typeof AdminSkillsRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/blog': typeof BlogRouteWithChildren
   '/contact': typeof ContactRoute
   '/mcp': typeof McpRoute
   '/projects': typeof ProjectsRoute
@@ -181,6 +203,7 @@ export interface FileRoutesByTo {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/about': typeof AdminAboutRoute
   '/admin/auth': typeof AdminAuthRoute
+  '/admin/blogs': typeof AdminBlogsRoute
   '/admin/credentials': typeof AdminCredentialsRoute
   '/admin/experience': typeof AdminExperienceRoute
   '/admin/media': typeof AdminMediaRoute
@@ -190,6 +213,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/skills': typeof AdminSkillsRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/admin': typeof AdminIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -198,6 +222,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
+  '/blog': typeof BlogRouteWithChildren
   '/contact': typeof ContactRoute
   '/mcp': typeof McpRoute
   '/projects': typeof ProjectsRoute
@@ -206,6 +231,7 @@ export interface FileRoutesById {
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin/about': typeof AdminAboutRoute
   '/admin/auth': typeof AdminAuthRoute
+  '/admin/blogs': typeof AdminBlogsRoute
   '/admin/credentials': typeof AdminCredentialsRoute
   '/admin/experience': typeof AdminExperienceRoute
   '/admin/media': typeof AdminMediaRoute
@@ -215,6 +241,7 @@ export interface FileRoutesById {
   '/admin/settings': typeof AdminSettingsRoute
   '/admin/skills': typeof AdminSkillsRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
 }
@@ -224,6 +251,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/blog'
     | '/contact'
     | '/mcp'
     | '/projects'
@@ -232,6 +260,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin/about'
     | '/admin/auth'
+    | '/admin/blogs'
     | '/admin/credentials'
     | '/admin/experience'
     | '/admin/media'
@@ -241,12 +270,14 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/skills'
     | '/admin/testimonials'
+    | '/blog/$slug'
     | '/admin/'
     | '/.mcp/invoke-tool/$tool'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
+    | '/blog'
     | '/contact'
     | '/mcp'
     | '/projects'
@@ -255,6 +286,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin/about'
     | '/admin/auth'
+    | '/admin/blogs'
     | '/admin/credentials'
     | '/admin/experience'
     | '/admin/media'
@@ -264,6 +296,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/skills'
     | '/admin/testimonials'
+    | '/blog/$slug'
     | '/admin'
     | '/.mcp/invoke-tool/$tool'
   id:
@@ -271,6 +304,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/blog'
     | '/contact'
     | '/mcp'
     | '/projects'
@@ -279,6 +313,7 @@ export interface FileRouteTypes {
     | '/.well-known/oauth-protected-resource'
     | '/admin/about'
     | '/admin/auth'
+    | '/admin/blogs'
     | '/admin/credentials'
     | '/admin/experience'
     | '/admin/media'
@@ -288,6 +323,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/skills'
     | '/admin/testimonials'
+    | '/blog/$slug'
     | '/admin/'
     | '/.mcp/invoke-tool/$tool'
   fileRoutesById: FileRoutesById
@@ -296,6 +332,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRouteWithChildren
+  BlogRoute: typeof BlogRouteWithChildren
   ContactRoute: typeof ContactRoute
   McpRoute: typeof McpRoute
   ProjectsRoute: typeof ProjectsRoute
@@ -335,6 +372,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -362,6 +406,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof BlogRoute
     }
     '/admin/testimonials': {
       id: '/admin/testimonials'
@@ -426,6 +477,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCredentialsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/blogs': {
+      id: '/admin/blogs'
+      path: '/blogs'
+      fullPath: '/admin/blogs'
+      preLoaderRoute: typeof AdminBlogsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/auth': {
       id: '/admin/auth'
       path: '/auth'
@@ -467,6 +525,7 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminAboutRoute: typeof AdminAboutRoute
   AdminAuthRoute: typeof AdminAuthRoute
+  AdminBlogsRoute: typeof AdminBlogsRoute
   AdminCredentialsRoute: typeof AdminCredentialsRoute
   AdminExperienceRoute: typeof AdminExperienceRoute
   AdminMediaRoute: typeof AdminMediaRoute
@@ -482,6 +541,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminAboutRoute: AdminAboutRoute,
   AdminAuthRoute: AdminAuthRoute,
+  AdminBlogsRoute: AdminBlogsRoute,
   AdminCredentialsRoute: AdminCredentialsRoute,
   AdminExperienceRoute: AdminExperienceRoute,
   AdminMediaRoute: AdminMediaRoute,
@@ -496,10 +556,21 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface BlogRouteChildren {
+  BlogSlugRoute: typeof BlogSlugRoute
+}
+
+const BlogRouteChildren: BlogRouteChildren = {
+  BlogSlugRoute: BlogSlugRoute,
+}
+
+const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRouteWithChildren,
+  BlogRoute: BlogRouteWithChildren,
   ContactRoute: ContactRoute,
   McpRoute: McpRoute,
   ProjectsRoute: ProjectsRoute,

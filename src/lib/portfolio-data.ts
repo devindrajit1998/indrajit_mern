@@ -149,6 +149,7 @@ export const navLinks = [
   { to: "/about", label: "About" },
   { to: "/projects", label: "Projects" },
   { to: "/services", label: "Services" },
+  { to: "/blog", label: "Blog" },
   { to: "/contact", label: "Contact" },
 ] as const;
 
@@ -232,6 +233,91 @@ export const testimonials: Testimonial[] = [
     rating: 5,
     date: "2025-01-15",
     featured: true,
+  },
+];
+
+export type BlogPost = {
+  id?: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  coverImage?: string;
+  category: string;
+  tags: string[];
+  readTime: string;
+  publishedAt: string;
+  published: boolean;
+  featured?: boolean;
+};
+
+export const mockBlogs: BlogPost[] = [
+  {
+    slug: "mastering-mern-scalable-architecture",
+    title: "Mastering the MERN Stack: Architectural Patterns for Scalable Apps",
+    excerpt: "A deep dive into repository patterns, JWT authentication with refresh token rotations, and Redis caching strategies in production MERN environments.",
+    content: `## Building Production-Grade MERN Applications
+
+When building scalable full-stack applications with MongoDB, Express.js, React, and Node.js, engineering beyond basic tutorial CRUD structures is essential.
+
+### 1. Layered Architecture & Separation of Concerns
+Avoid dumping database queries directly into route controllers. Instead, segment your backend into:
+- **Routes Layer**: Endpoint definitions and input validation (using Zod or Joi).
+- **Controller Layer**: Orchestrates requests, status codes, and HTTP responses.
+- **Service Layer**: Houses the core business logic.
+- **Repository / Model Layer**: Communicates with MongoDB via Mongoose.
+
+### 2. High-Performance Caching with Redis
+Database lookups for frequently requested read-heavy endpoints can saturate MongoDB connections:
+\`\`\`javascript
+const cachedData = await redis.get(cacheKey);
+if (cachedData) return JSON.parse(cachedData);
+
+const dbData = await Project.find({ featured: true });
+await redis.setex(cacheKey, 3600, JSON.stringify(dbData));
+return dbData;
+\`\`\`
+
+### 3. Conclusion
+Architecting cleanly early on saves dozens of hours of refactoring when traffic begins scaling.`,
+    coverImage: "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=1200&auto=format&fit=crop&q=80",
+    category: "Full-Stack Development",
+    tags: ["MERN", "React", "Node.js", "System Design"],
+    readTime: "5 min read",
+    publishedAt: "2025-01-20",
+    published: true,
+    featured: true,
+  },
+  {
+    slug: "optimizing-react-renders-and-tanstack-query",
+    title: "Zero-Lag UIs: Optimizing React 19 State & TanStack Query",
+    excerpt: "Learn how to eliminate unnecessary re-renders, leverage server-state caching, and build silky-smooth user interfaces.",
+    content: `## Why Most React Apps Feel Sluggish
+
+Performance in modern React isn't just about reducing bundle size; it's about minimizing main-thread blocking and preventing cascading render trees.
+
+### 1. Colocate State
+Never lift state higher than necessary. If a modal or dropdown is only used in a navigation item, keep the state local to that component.
+
+### 2. TanStack Query as the Single Source of Server Truth
+Stop syncing server responses into global Redux/Zustand stores when TanStack Query handles caching, background refetching, and deduping automatically:
+\`\`\`typescript
+const { data, isLoading } = useQuery({
+  queryKey: ['projects'],
+  queryFn: fetchProjects,
+  staleTime: 1000 * 60 * 5, // 5 minutes fresh
+});
+\`\`\`
+
+### 3. Hardware-Accelerated CSS Transitions
+Ensure animations use \`transform\` and \`opacity\` rather than layout-triggering properties like \`width\`, \`height\`, or \`top\`.`,
+    coverImage: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80",
+    category: "Frontend Engineering",
+    tags: ["React", "Performance", "TanStack", "TypeScript"],
+    readTime: "4 min read",
+    publishedAt: "2025-02-10",
+    published: true,
+    featured: false,
   },
 ];
 

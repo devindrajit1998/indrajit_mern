@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Download, ArrowUp, Github, Linkedin, Twitter, Mail, Home, User, FolderKanban, Wrench, Send, ShieldAlert } from "lucide-react";
+import { Download, ArrowUp, Github, Linkedin, Twitter, Mail, Home, User, FolderKanban, Wrench, Send, ShieldAlert, BookOpen } from "lucide-react";
 import type { ReactNode } from "react";
 import { navLinks } from "@/lib/portfolio-data";
 import { Background } from "./ui/Background";
@@ -10,6 +10,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
   const { data: settings } = useFirestoreDoc<any>("settings", "site_settings");
 
   const isFreelancer = settings?.freelancerMode === true;
+  const isBlogEnabled = settings?.enableBlog === true;
 
   // Mobile app dock links mapping to lucide icons
   const dockLinks = [
@@ -17,6 +18,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
     { to: "/about", label: "About", icon: User },
     { to: "/projects", label: "Projects", icon: FolderKanban },
     ...(isFreelancer ? [{ to: "/services", label: "Services", icon: Wrench }] : []),
+    ...(isBlogEnabled ? [{ to: "/blog", label: "Blog", icon: BookOpen }] : []),
     { to: "/contact", label: "Contact", icon: Send },
   ];
 
@@ -33,16 +35,18 @@ export function SiteLayout({ children }: { children: ReactNode }) {
             <span className="logo-bracket-right text-brand-blue transition-transform duration-300 ease-out">/&gt;</span>
           </Link>
           <nav className="hidden lg:flex items-center gap-8">
-            {navLinks.filter(n => n.to !== "/services" || isFreelancer).map((n) => (
-              <Link
-                key={n.to}
-                to={n.to}
-                activeOptions={{ exact: true }}
-                className="text-sm font-medium text-muted-foreground transition-colors hover:text-brand-purple data-[status=active]:text-brand-purple data-[status=active]:border-b-2 data-[status=active]:border-brand-purple data-[status=active]:pb-1"
-              >
-                {n.label}
-              </Link>
-            ))}
+            {navLinks
+              .filter((n) => (n.to !== "/services" || isFreelancer) && (n.to !== "/blog" || isBlogEnabled))
+              .map((n) => (
+                <Link
+                  key={n.to}
+                  to={n.to}
+                  activeOptions={{ exact: true }}
+                  className="text-sm font-medium text-muted-foreground transition-colors hover:text-brand-purple data-[status=active]:text-brand-purple data-[status=active]:border-b-2 data-[status=active]:border-brand-purple data-[status=active]:pb-1"
+                >
+                  {n.label}
+                </Link>
+              ))}
           </nav>
           <div className="flex items-center gap-2.5">
             {settings?.showResume && (bio?.resumeUrl || bio?.resumeBase64) ? (
