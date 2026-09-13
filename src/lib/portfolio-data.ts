@@ -253,6 +253,123 @@ export type BlogPost = {
 
 export const mockBlogs: BlogPost[] = [
   {
+    slug: "getting-started-with-react-in-2026",
+    title: "Getting Started with React: A Complete Beginner's Roadmap",
+    excerpt: "New to React? Learn the essential core concepts: JSX, components, props, and useState with simple hands-on code examples.",
+    content: `## Welcome to Modern React!
+
+If you are just starting your frontend journey, React can feel overwhelming with all the terminology. But at its core, React is simply about breaking user interfaces into small, reusable building blocks called **Components**.
+
+### 1. What is JSX?
+JSX stands for JavaScript XML. It allows you to write HTML-like syntax right inside your JavaScript code:
+
+\`\`\`javascript
+function WelcomeMessage() {
+  const name = "Developer";
+  return <h1>Hello, {name}! Welcome to React.</h1>;
+}
+\`\`\`
+
+### 2. Understanding Props (Passing Data)
+Props (short for properties) allow you to pass dynamic data from a parent component down to a child component:
+
+\`\`\`javascript
+function UserCard({ name, role }) {
+  return (
+    <div className="card">
+      <h3>{name}</h3>
+      <p>{role}</p>
+    </div>
+  );
+}
+
+// Usage:
+<UserCard name="Indrajit" role="Full-Stack Engineer" />
+\`\`\`
+
+### 3. Adding Interactivity with useState
+State is how a component remembers data that can change over time based on user clicks or typing:
+
+\`\`\`javascript
+import { useState } from "react";
+
+function Counter() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <button onClick={() => setCount(count + 1)}>
+      Clicked {count} times
+    </button>
+  );
+}
+\`\`\`
+
+### Summary
+Mastering Components, Props, and State provides 80% of what you need to build interactive web apps. Build small projects and practice every day!`,
+    coverImage: "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=1200&auto=format&fit=crop&q=80",
+    category: "React / Frontend",
+    tags: ["React", "JavaScript", "Beginner", "WebDev"],
+    readTime: "4 min read",
+    publishedAt: "2025-02-15",
+    published: true,
+    featured: true,
+  },
+  {
+    slug: "understanding-rest-apis-and-nodejs",
+    title: "Understanding REST APIs: A Beginner's Guide to Backend with Node.js & Express",
+    excerpt: "Learn how the frontend talks to the backend: HTTP methods (GET, POST, PUT, DELETE), JSON data exchange, and creating your very first Express server.",
+    content: `## How Does the Web Actually Work?
+
+Whenever you load a website, submit a form, or like a post, your browser (the client) communicates with a server over the internet. That communication happens through an **API (Application Programming Interface)**.
+
+### 1. The 4 Key HTTP Methods (CRUD)
+REST APIs typically follow standard HTTP action verbs:
+- **GET**: Retrieve data from the server (e.g., getting a list of projects).
+- **POST**: Send new data to the server (e.g., submitting a contact form).
+- **PUT / PATCH**: Update existing data (e.g., editing your profile name).
+- **DELETE**: Remove data from the database.
+
+### 2. Creating Your First Express.js Server
+With Node.js and Express, spinning up an API endpoint takes only a few lines:
+
+\`\`\`javascript
+const express = require("express");
+const app = express();
+
+app.use(express.json());
+
+// Sample GET endpoint
+app.get("/api/greet", (req, res) => {
+  res.json({ message: "Hello from the backend!" });
+});
+
+app.listen(5000, () => {
+  console.log("Server running on port 5000 🚀");
+});
+\`\`\`
+
+### 3. Connecting Frontend to Backend with fetch()
+In your React application, calling this API is straightforward:
+
+\`\`\`javascript
+useEffect(() => {
+  fetch("/api/greet")
+    .then((response) => response.json())
+    .then((data) => console.log(data.message));
+}, []);
+\`\`\`
+
+### Next Steps
+Now that you understand client-server communication, try connecting MongoDB to store your data permanently!`,
+    coverImage: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&auto=format&fit=crop&q=80",
+    category: "Backend / Node.js",
+    tags: ["Node.js", "Express", "API", "Beginner"],
+    readTime: "5 min read",
+    publishedAt: "2025-02-18",
+    published: true,
+    featured: false,
+  },
+  {
     slug: "mastering-mern-scalable-architecture",
     title: "Mastering the MERN Stack: Architectural Patterns for Scalable Apps",
     excerpt: "A deep dive into repository patterns, JWT authentication with refresh token rotations, and Redis caching strategies in production MERN environments.",
@@ -286,38 +403,8 @@ Architecting cleanly early on saves dozens of hours of refactoring when traffic 
     readTime: "5 min read",
     publishedAt: "2025-01-20",
     published: true,
-    featured: true,
-  },
-  {
-    slug: "optimizing-react-renders-and-tanstack-query",
-    title: "Zero-Lag UIs: Optimizing React 19 State & TanStack Query",
-    excerpt: "Learn how to eliminate unnecessary re-renders, leverage server-state caching, and build silky-smooth user interfaces.",
-    content: `## Why Most React Apps Feel Sluggish
-
-Performance in modern React isn't just about reducing bundle size; it's about minimizing main-thread blocking and preventing cascading render trees.
-
-### 1. Colocate State
-Never lift state higher than necessary. If a modal or dropdown is only used in a navigation item, keep the state local to that component.
-
-### 2. TanStack Query as the Single Source of Server Truth
-Stop syncing server responses into global Redux/Zustand stores when TanStack Query handles caching, background refetching, and deduping automatically:
-\`\`\`typescript
-const { data, isLoading } = useQuery({
-  queryKey: ['projects'],
-  queryFn: fetchProjects,
-  staleTime: 1000 * 60 * 5, // 5 minutes fresh
-});
-\`\`\`
-
-### 3. Hardware-Accelerated CSS Transitions
-Ensure animations use \`transform\` and \`opacity\` rather than layout-triggering properties like \`width\`, \`height\`, or \`top\`.`,
-    coverImage: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80",
-    category: "Frontend Engineering",
-    tags: ["React", "Performance", "TanStack", "TypeScript"],
-    readTime: "4 min read",
-    publishedAt: "2025-02-10",
-    published: true,
     featured: false,
   },
 ];
+
 
